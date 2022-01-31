@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+body {
+  background-color: #1D2127;
+  margin: auto;
+  font-family: 'Lato', sans-serif;
+
+}
+
+.content {
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-top: 3%;
+}
+
+h1 {
+  color: #CFD9E4;
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
+
+.header p {
+  margin: 0;
+  padding: 0;
+  color: #f6c453;
+}
+
+.header {
+  background-color: #2E333A;
+  font-family: 'Lato', sans-serif;
+  text-align: center;
+  padding: 10px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  grid-gap: 10px;
+}
+
+.folders, .files {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.elements button {
+  background: transparent;
+  border: none;
+}
+
+.back_button {
+  text-align: left;
+  margin-left: 5%;
+}
+
+.back_button button{
+  background: transparent;
+  border: none;
+}
+
+.back_button button:hover{
+  background: #fefbe9;
+}
+
+.files p, .folders p {
+  color: #AFBAC5;
+  font-size: 12pt;
+  margin:0;
+  padding:0;
+  margin-top: 0.5%;
+}
+
+.files img, .folders img {
+  margin:0;
+  padding:0;
+}
+
+.menue {
+     display: flex;
+}
+
+.options {
+  margin:0;
+  padding: 0;
+  display: flex;
+  margin-bottom: 3%;
+}
+
+.options button {
+     background:#2E333A;
+     color: #CFD9E4;
+     border-color: #2E333A;
+     text-shadow: none;
+     border-radius: 10%;
+     margin-right: 10px;
+     height: 20pt;
+}
+
+.options button:hover {
+     background:#1D2127;
+     border-color: #2E333A;
+     color: #f6c453;
+
+
+}
+
+.newElement {
+  display: inline;
+}
+
+.login {
+  text-align: left;
+  justify-content: center;
+  align-items: center;
+  margin-left: 5%;
+  margin-top: 1%;
+
+}
+
+.login input{
+  width: 20px;
+}
+
+.login p{
+  color: #CFD9E4;
+}
+
+.shellBox {
+  margin-left: 5%;
+}
+
+;

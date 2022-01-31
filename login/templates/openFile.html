@@ -1,0 +1,35 @@
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="utf-8">
+  <title>SSH - File Browser</title>
+  <meta name="author" content="DGR">
+  <script language="javascript" type="text/javascript" src="{% static 'editarea/edit_area/edit_area_full.js' %}"></script>
+  <link rel="icon" href="https://img.icons8.com/color/48/000000/pen.png"/>
+
+</head>
+
+<div class="openFile">
+  <textarea id="editor" rows="40" cols="80"></textarea>
+  <input type="hidden" id="hiddencontent" value="{{ content }}">
+
+  <form class="button" action="http://sshide.de/open/" method="post">
+    <input id="edit" type="hidden" name="content">
+    <input type="hidden" name="path" value="{{ path }}">
+    <input type="hidden" name="folder" value="{{ folder }}">
+    <button onclick="updateContent()" type="submit">Save</button>
+  </form>
+  <script src="{% static 'js/prism.js' %}"></script>
+  <script type="text/javascript">
+    document.getElementById('editor').value = document.getElementById("hiddencontent").value;
+    editAreaLoader.init({
+      id : "editor"		// textarea id
+      ,syntax: "python"			// syntax to be uses for highgliting
+      ,start_highlight: true		// to display with highlight mode on start-up
+    });
+
+    function updateContent() {
+      document.getElementById('edit').value = editAreaLoader.getValue('editor')
+    }
+  </script>
+</div>

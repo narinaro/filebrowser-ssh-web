@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="utf-8">
+  <title>SSHIDE - File Browser & IDE</title>
+  <meta name="author" content="DGR">
+  <link rel="stylesheet" href="{% static 'css/fileBrowser.css' %}">
+  <link rel="icon" href="https://img.icons8.com/color/48/000000/pen.png"/>
+</head>
+
+<div class="header">
+    <div class="login">
+      <form action="http://sshide.de/" method="get">
+        <input type="image" src="/static/img/log-out.png">
+      </form>
+      <p>{{ IP }}</p>
+    </div>
+    <h1>File Browser</h1>
+    <p>Simple File Browser and IDE based on SSH.</p>
+    <div class="menue">
+      <div class="back_button">
+        <form action="" method="get">
+          <input type="hidden" id="back" name="folder">
+          <button type="submit">
+            <img src="https://img.icons8.com/external-kmg-design-basic-outline-kmg-design/32/000000/external-backwards-arrows-kmg-design-basic-outline-kmg-design.png"/>
+          </button>
+        </form>
+      </div>
+    </div>
+</div>
+<div class="content">
+  <div class="options">
+
+    <button type="button" onclick="deleteOptIni()" id="deleteSelect">Delete</button>
+    <form action="http://sshide.de/options/" method="post">
+      <input type="hidden" name="delete" value="1">
+      <input type="hidden" name="path" value="{{ path }}">
+      {% if folderQuantity > 1 %}
+        {% for counter, folder, folderName in responseFoldersAndPaths %}
+        <input id="{{ counter}}_input" type="hidden" name="{{ folder }}">
+        {% endfor %}
+      {% else %}
+        {% for folder, folderName in responseFoldersAndPaths %}
+        <input id="0_input" type="hidden" name="{{ folder }}">
+        {% endfor %}
+      {% endif %}
+
+      {% if fileQuantity > 1 %}
+        {% for counter, file in responseFilesWithCounter %}
+        <input id="{{ counter }}_input" type="hidden" name="{{ path }}{{ file }}">
+        {% endfor %}
+      {% else %}
+        {% for file in responseFile %}
+        <input id="3000_input" type="hidden" name="{{ path }}{{ file }}">
+        {% endfor %}
+      {% endif %}
+      <button id="deleteSubmit" type="submit" onclick="deleteOpt()">Delete</button>
+    </form>
+
+
+    <button onclick="newFolder()">New folder</button>
+
+
+    <form class="newElement" id="newFolder" action="http://sshide.de/options/" method="post">
+      <input type="hidden" name="create" value="1">
+      <input type="hidden" name="path" value="{{ path }}">
+      <input id="inputNewFolder" type="text" name="newFolder" placeholder="Folder name">
+      <input type="submit" value="Create">
+    </form>
+
+
+    <button onclick="newFile()">New file</button>
+
+
+    <form class="newElement" id="newFile" action="http://sshide.de/options/" method="post">
+      <input type="hidden" name="create" value="1">
+      <input type="hidden" name="path" value="{{ path }}">
+      <input id="inputNewFile" type="text" name="newFile" placeholder="File name">
+      <input type="submit" value="Create">
+    </form>
+
+
+    <button type="button" onclick="downloadOptIni()" id="downloadSelect">Download</button>
+    <form id="downloadForm" action="http://sshide.de/options/" method="post">
+      <input type="hidden" name="download" value="1">
+      <input type="hidden" name="path" value="{{ path }}">
+      {% if folderQuantity > 1 %}
+        {% for counter, folder, folderName in responseFoldersAndPaths %}
+        <input id="{{ counter}}_download" type="hidden" name="/{{ folderName }}">
+        {% endfor %}
+      {% else %}
+        {% for folder, folderName in responseFoldersAndPaths %}
+        <input id="0_download" type="hidden" name="/{{ folderName }}">
+        {% endfor %}
+      {% endif %}
+
+      {% if fileQuantity > 1 %}
+        {% for counter, file in responseFilesWithCounter %}
+        <input id="{{ counter }}_download" type="hidden" name="{{ file }}">
+        {% endfor %}
+      {% else %}
+        {% for file in responseFile %}
+        <input id="3000_download" type="hidden" name="{{ file }}">
+        {% endfor %}
+      {% endif %}
+      <button id="downloadSubmit" type="submit" onclick="downloadOpt()">Download</button>
+    </form>
+
+    <button type="button" onclick="renameOptIni()" id="renameSelect">Rename</button>
+    <form action="http://sshide.de/options/" method="post">
+      <input type="hidden" name="rename" value="1">
+      <input type="hidden" name="path" value="{{ path }}">
+      {% if folderQuantity > 1 %}
+        {% for counter, folder, folderName in responseFoldersAndPaths %}
+        <input id="{{ counter}}_rename" type="hidden" name="/{{ folderName }}">
+        {% endfor %}
+      {% else %}
+        {% for folder, folderName in responseFoldersAndPaths %}
+        <input id="0_rename" type="hidden" name="/{{ folderName }}">
+        {% endfor %}
+      {% endif %}
+
+      {% if fileQuantity > 1 %}
+        {% for counter, file in responseFilesWithCounter %}
+        <input id="{{ counter }}_rename" type="hidden" name="{{ file }}">
+        {% endfor %}
+      {% else %}
+        {% for file in responseFile %}
+        <input id="3000_rename" type="hidden" name="{{ file }}">
+        {% endfor %}
+      {% endif %}
+      <button id="renameSubmit" type="submit" onclick="renameOpt()">Rename</button>
+      <input id="renameInput" type="text" name="newName" placeholder="">
+    </form>
+
+
+    <button type="button" onclick="uploadOptIni()" id="uploadSelect">Upload</button>
+    <form id="uploadForm" class="uploadElement" enctype="multipart/form-data" action="http://sshide.de/options/" method="post">
+      <input type="hidden" name="upload" value="1">
+      <input type="hidden" name="path" value="{{ path }}">
+      <input type="submit" value="Upload">
+      <input type="file" multiple name="document">
+    </form>
+
+    <button id="selectAll" onclick="selectAll()">Select all</button>
+
+    <form class="shellBox" action="http://sshide.de/options/" method="post">
+      <input type="hidden" name="exec" value="1">
+      <input type="hidden" name="path" value="{{ path }}">
+      <input type="text" name="command" placeholder="Command">
+      <input type="submit" name="" value="Execute">
+    </form>
+
+  </div>
+  <div class="elements">
+    <div class="grid">
+      {% if folderQuantity > 1 %}
+        {% for counter, folder, folderName in responseFoldersAndPaths %}
+        <div class="folders">
+          <form action="" method="get">
+            <input type="hidden" name="folder" value="{{ folder }}">
+            <input class="{{ folder }}" id="{{ counter }}" type="checkbox">
+            <button type="submit">
+              <img src="https://img.icons8.com/fluency/48/000000/folder-invoices--v2.png"/>
+              <p id="{{ folder }}_text">{{ folderName }}</p>
+            </button>
+          </form>
+        </div>
+        {% endfor %}
+      {% else %}
+        {% for folder, folderName in responseFoldersAndPaths %}
+        <div class="folders">
+          <form action="" method="get">
+            <input type="hidden" name="folder" value="{{ folder }}">
+            <input class="{{ folder }}" id="0" type="checkbox">
+            <button type="submit">
+              <img src="https://img.icons8.com/fluency/48/000000/folder-invoices--v2.png"/>
+              <p>{{ folderName }}</p>
+            </button>
+          </form>
+        </div>
+        {% endfor %}
+      {% endif %}
+
+      {% if fileQuantity > 1 %}
+        {% for counter, file in responseFilesWithCounter %}
+        <div class="files">
+          <form action="http://sshide.de/open/" method="get">
+            <input type="hidden" name="file" value="{{ file }}">
+            <input type="hidden" name="folder" value="{{ path }}">
+            <input class="{{ file }}" id="{{ counter }}" type="checkbox">
+            <button type="submit">
+              <img id="{{ file }}_img" />
+              <p id="{{ file }}_text">{{ file }}</p>
+            </button>
+          </form>
+          <script type="text/javascript">
+            var ext = "{{ file }}".split(".");
+
+            switch(ext[1]) {
+              case "py":
+                document.getElementById("{{ file }}_img").src = "https://img.icons8.com/external-flat-juicy-fish/60/000000/external-python-coding-and-development-flat-flat-juicy-fish.png";
+                break;
+              case "js":
+                document.getElementById("{{ file }}_img").src = "https://img.icons8.com/color/48/000000/javascript--v2.png";
+                break;
+              default:
+                document.getElementById("{{ file }}_img").src = "https://img.icons8.com/color/48/000000/file.png";
+                break;
+            }
+          </script>
+        </div>
+        {% endfor %}
+      {% else %}
+        {% for file in responseFile %}
+        <div class="files">
+          <form action="http://sshide.de/open/" method="get">
+            <input type="hidden" name="file" value="{{ file }}">
+            <input type="hidden" name="folder" value="{{ path }}">
+            <input class="{{ file }}" id="3000" type="checkbox">
+            <button type="submit">
+              <img id="{{ file }}_img" />
+              <p>{{ file }}</p>
+            </button>
+          </form>
+          <script type="text/javascript">
+            var ext = "{{ file }}".split(".");
+
+            switch(ext[1]) {
+              case "py":
+                document.getElementById("{{ file }}_img").src = "https://img.icons8.com/external-flat-juicy-fish/60/000000/external-python-coding-and-development-flat-flat-juicy-fish.png";
+                break;
+              case "js":
+                document.getElementById("{{ file }}_img").src = "https://img.icons8.com/color/48/000000/javascript--v2.png";
+                break;
+              default:
+                document.getElementById("{{ file }}_img").src = "https://img.icons8.com/color/48/000000/file.png";
+                break;
+            }
+          </script>
+        </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+  <script type="text/javascript">
+    var path = "{{ path }}";
+    var path_array = path.split("");
+    var reverse_path_array = path_array.reverse();
+    var joinArray = reverse_path_array.join("");
+    joinArray = joinArray.substring(1);
+    joinArray = joinArray.substring(joinArray.indexOf("/"));
+    path_array = joinArray.split("");
+    reverse_path_array = path_array.reverse();
+    joinArray = reverse_path_array.join("");
+    document.getElementById("back").value = joinArray;
+
+    var folderQuantity = {{ folderQuantity }};
+    var fileQuantity   = {{ fileQuantity }};
+
+    document.getElementById('selectAll').style.display = 'none';
+    document.getElementById('newFile').style.display = 'none';
+    document.getElementById('newFolder').style.display = 'none';
+    document.getElementById('deleteSubmit').style.display = 'none';
+    document.getElementById('downloadSubmit').style.display = 'none';
+    document.getElementById('renameSubmit').style.display = 'none';
+    document.getElementById('renameInput').style.display = 'none';
+    document.getElementById('uploadForm').style.display = 'none';
+
+
+    if (folderQuantity > 0){
+      for (var i = 0; i <= folderQuantity; i++){
+        if (folderQuantity > 1){
+          if (i > 0){
+            document.getElementById(i).style.display = 'none';
+          }
+        } else {
+          document.getElementById(i).style.display = 'none';
+          break;
+        }
+      }
+    }
+
+    if (fileQuantity > 0){
+      for (i = 3000; i <= fileQuantity + 3000; i++){
+        if (fileQuantity > 1){
+          if (i > 3000){
+            document.getElementById(i).style.display = 'none';
+          }
+        } else {
+          document.getElementById(3000).style.display = 'none';
+          break;
+        }
+      }
+    }
+
+
+    function select(){
+
+      if (document.getElementById('selectAll').style.display === 'none') {
+        document.getElementById('selectAll').style.display = 'block';
+      } else {
+        document.getElementById('selectAll').style.display = 'none';
+      }
+
+      if (folderQuantity > 0) {
+        for (var i = 0; i <= folderQuantity; i++){
+          if (folderQuantity > 1){
+            if (i > 0){
+              if(document.getElementById(i).style.display === 'none'){
+                document.getElementById(i).style.display = 'block';
+              } else {
+                document.getElementById(i).style.display = 'none';
+                document.getElementById(i).checked = false;
+              }
+            }
+          } else {
+            if(document.getElementById(i).style.display === 'none'){
+              document.getElementById(i).style.display = 'block';
+            } else {
+              document.getElementById(i).style.display = 'none';
+              document.getElementById(i).checked = false;
+            }
+            break;
+          }
+        }
+      }
+
+      if (fileQuantity > 0) {
+        for (i = 3000; i <= fileQuantity + 3000; i++){
+          if (fileQuantity > 1){
+            if (i > 3000){
+              if(document.getElementById(i).style.display === 'none'){
+                document.getElementById(i).style.display = 'block';
+              } else {
+                document.getElementById(i).style.display = 'none';
+                document.getElementById(i).checked = false;
+              }
+            }
+          } else {
+            if(document.getElementById(3000).style.display === 'none'){
+              document.getElementById(3000).style.display = 'block';
+            } else {
+              document.getElementById(3000).style.display = 'none';
+              document.getElementById(i).checked = false;
+            }
+            break;
+          }
+        }
+      }
+    }
+
+    function downloadOptIni(){
+
+      if (document.getElementById('downloadSubmit').style.display === 'none') {
+        document.getElementById('downloadSubmit').style.display = 'block';
+        document.getElementById('downloadSelect').style.display = 'none';
+      } else {
+        document.getElementById('downloadSubmit').style.display = 'none';
+        document.getElementById('downloadSelect').style.display = 'block';
+      }
+
+      select()
+
+    }
+
+    function downloadOpt(){
+
+      var downloadFlag = 0;
+
+      if (folderQuantity > 0) {
+        for (var i = 0; i <= folderQuantity; i++){
+          if (folderQuantity > 1){
+            if (i > 0){
+              chkBox = document.getElementById(i);
+              if (chkBox.checked){
+                document.getElementById(i + "_download").value = "1element";
+                downloadFlag = 1;
+              }
+            }
+          } else {
+            chkBox = document.getElementById(0);
+            if (chkBox.checked){
+              document.getElementById("0_download").value = "1element";
+              downloadFlag = 1;
+            }
+            break;
+          }
+        }
+      }
+
+      if (fileQuantity > 0) {
+        for (i = 3000; i <= fileQuantity + 3000; i++){
+          if (fileQuantity > 1){
+            if (i > 3000){
+              chkBox = document.getElementById(i);
+              if (chkBox.checked){
+                document.getElementById(i + "_download").value = "1element";
+                downloadFlag = 1;
+              }
+            }
+          } else {
+            chkBox = document.getElementById(3000);
+            if (chkBox.checked){
+              document.getElementById("3000_download").value = "1element";
+              downloadFlag = 1;
+            }
+            break;
+          }
+        }
+      }
+
+      if (downloadFlag === 0){
+        alert("No files selected!");
+      }
+    }
+
+    function deleteOptIni(){
+
+      if (document.getElementById('deleteSubmit').style.display === 'none') {
+        document.getElementById('deleteSubmit').style.display = 'block';
+        document.getElementById('deleteSelect').style.display = 'none';
+      } else {
+        document.getElementById('deleteSubmit').style.display = 'none';
+        document.getElementById('deleteSelect').style.display = 'block';
+      }
+
+      select()
+
+    }
+
+    function deleteOpt(){
+
+      var deleteFlag = 0;
+
+      if (folderQuantity > 0) {
+        for (var i = 0; i <= folderQuantity; i++){
+          if (folderQuantity > 1){
+            if (i > 0){
+              chkBox = document.getElementById(i);
+              if (chkBox.checked){
+                document.getElementById(i + "_input").value = "1folder";
+                deleteFlag = 1;
+              }
+            }
+          } else {
+            chkBox = document.getElementById(0);
+            if (chkBox.checked){
+              document.getElementById("0_input").value = "1folder";
+              deleteFlag = 1;
+            }
+            break;
+          }
+        }
+      }
+
+      if (fileQuantity > 0) {
+        for (i = 3000; i <= fileQuantity + 3000; i++){
+          if (fileQuantity > 1){
+            if (i > 3000){
+              chkBox = document.getElementById(i);
+              if (chkBox.checked){
+                document.getElementById(i + "_input").value = "1file";
+                deleteFlag = 1;
+              }
+            }
+          } else {
+            chkBox = document.getElementById(3000);
+            if (chkBox.checked){
+              document.getElementById("3000_input").value = "1file";
+              deleteFlag = 1;
+            }
+            break;
+          }
+        }
+      }
+
+      if(deleteFlag === 0){
+        alert("No files selected!");
+      }
+    }
+
+    function downloadOptIni(){
+
+      if (document.getElementById('downloadSubmit').style.display === 'none') {
+        document.getElementById('downloadSubmit').style.display = 'block';
+        document.getElementById('downloadSelect').style.display = 'none';
+      } else {
+        document.getElementById('downloadSubmit').style.display = 'none';
+        document.getElementById('downloadSelect').style.display = 'block';
+      }
+
+      select()
+
+    }
+
+    function selectAll() {
+      if (folderQuantity > 0) {
+        for (var i = 0; i <= folderQuantity; i++){
+          if (folderQuantity > 1){
+            if (i > 0){
+              chkBox = document.getElementById(i);
+              if (!chkBox.checked){
+                chkBox.checked = true;
+              } else {
+                chkBox.checked = false;
+              }
+            }
+          } else {
+            chkBox = document.getElementById(0);
+            if (!chkBox.checked){
+              chkBox.checked = true;
+            } else {
+              chkBox.checked = false;
+            }
+            break;
+          }
+        }
+      }
+
+      if (fileQuantity > 0) {
+        for (i = 3000; i <= fileQuantity + 3000; i++){
+          if (fileQuantity > 1){
+            if (i > 3000){
+              chkBox = document.getElementById(i);
+              if (!chkBox.checked){
+                chkBox.checked = true;
+              } else {
+                chkBox.checked = false;
+              }
+            }
+          } else {
+            chkBox = document.getElementById(3000);
+            if (!chkBox.checked){
+              chkBox.checked = true;
+            } else {
+              chkBox.checked = false;
+            }
+            break;
+          }
+        }
+      }
+    }
+
+    function newFile() {
+      if (document.getElementById('newFolder').style.display === 'block') {
+        document.getElementById('newFolder').style.display = 'none';
+      }
+
+      if (document.getElementById('newFile').style.display === 'none') {
+        document.getElementById('newFile').style.display = 'block';
+        document.getElementById('inputNewFile').focus();
+        document.getElementById('inputNewFile').value = '';
+      } else {
+        document.getElementById('newFile').style.display = 'none';
+      }
+
+    }
+
+    function newFolder() {
+      if (document.getElementById('newFile').style.display === 'block') {
+        document.getElementById('newFile').style.display = 'none';
+      }
+
+      if (document.getElementById('newFolder').style.display === 'none') {
+        document.getElementById('newFolder').style.display = 'block';
+        document.getElementById('inputNewFolder').focus();
+        document.getElementById('inputNewFolder').value = '';
+      } else {
+        document.getElementById('newFolder').style.display = 'none';
+      }
+
+    }
+
+    function renameOptIni() {
+
+      if (document.getElementById('renameSubmit').style.display === 'none') {
+        document.getElementById('renameSubmit').style.display = 'block';
+        document.getElementById('renameSelect').style.display = 'none';
+        document.getElementById('renameInput').style.display = 'block';
+        document.getElementById('inputNewFile').focus();
+      } else {
+        document.getElementById('renameSubmit').style.display = 'none';
+        document.getElementById('renameSelect').style.display = 'block';
+        document.getElementById('renameInput').style.display = 'none';
+      }
+
+      select()
+    }
+
+    function renameOpt() {
+      var renameFlag = 0;
+
+      if (folderQuantity > 0) {
+        for (var i = 0; i <= folderQuantity; i++){
+          if (folderQuantity > 1){
+            if (i > 0){
+              chkBox = document.getElementById(i);
+              if (chkBox.checked){
+                document.getElementById(i + "_rename").value = "1folder";
+                renameFlag += 1;
+              }
+            }
+          } else {
+            chkBox = document.getElementById(0);
+            if (chkBox.checked){
+              document.getElementById("0_rename").value = "1folder";
+              renameFlag += 1;
+            }
+            break;
+          }
+        }
+      }
+
+      if (fileQuantity > 0) {
+        for (i = 3000; i <= fileQuantity + 3000; i++){
+          if (fileQuantity > 1){
+            if (i > 3000){
+              chkBox = document.getElementById(i);
+              if (chkBox.checked){
+                document.getElementById(i + "_rename").value = "1file";
+                renameFlag += 1;
+              }
+            }
+          } else {
+            chkBox = document.getElementById(3000);
+            if (chkBox.checked){
+              document.getElementById("3000_rename").value = "1file";
+              renameFlag += 1;
+            }
+            break;
+          }
+        }
+      }
+
+      if (renameFlag > 1){
+        alert("Please select only one item!");
+      } else if (renameFlag < 1){
+        alert("Please select an item!")
+      }
+    }
+
+    function uploadOptIni(){
+
+      if (document.getElementById('uploadForm').style.display === 'none') {
+        document.getElementById('uploadForm').style.display = 'block';
+        document.getElementById('uploadSelect').style.display = 'none';
+      } else {
+        document.getElementById('uploadForm').style.display = 'none';
+        document.getElementById('uploadSelect').style.display = 'block';
+      }
+    }
+
+  </script>
+
+</div>

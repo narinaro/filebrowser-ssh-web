@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="utf-8">
+  <title>SSHIDE - File Browser & IDE</title>
+  <meta name="author" content="DGR">
+  <link rel="stylesheet" href="{% static 'css/ide.css' %}">
+  <link rel="icon" href="https://img.icons8.com/color/48/000000/pen.png"/>
+  <link rel="stylesheet" href="{% static 'codemirror/theme/base16-dark.css' %}">
+  <script src="{% static 'codemirror/lib/codemirror.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'codemirror/lib/codemirror.css' %}">
+  <script src="{% static 'codemirror/mode/javascript/javascript.js' %}"></script>
+</head>
+
+<div id="wrapper">
+  <div id="folderView">
+    <ul>
+        {% for path, item, folderFlag, id, base in itemZip %}
+        <li>
+            {% if folderFlag == "0" %}
+            <div>
+                <form action="http://sshide.de/ide/" method="get">
+                  <input type="hidden" name="folder" value="{{ currpath }}">
+                  <input type="hidden" name="file" value="{{ item }}">
+                  <button id="{{ id }}" class="{{ path }}" type="submit">{{ item }}</button>
+                </form>
+            </div>
+            {% else %}
+            <div>
+                <button id="{{ id }}" {% if base == "1" %}class="base"{% else %}class="{{ path }}"{% endif %} onclick="showHide(this.id)">{{ item }}</button>
+            </div>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+  </div>
+
+  <div id="editor">
+    <textarea id="textArea" name="content" rows="8" cols="80">{{ content }}</textarea>
+  </div>
+  <div>
+      <form action="" method="post">
+          <input type="hidden" name="file">
+          <input type="hidden" name="folder">
+          <input type="submit" value="Save">
+      </form>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+    var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("textArea"), {
+         value: "test",
+         mode: "javascript",
+         theme: "base16-dark",
+         lineNumbers: true
+    });
+
+    for (var i = 0; i < {{ quantity }}; i ++) {
+        document.getElementById(i).style.display = 'none';
+    }
+
+    Array.from(document.getElementsByClassName("base")).forEach(
+        function(element, index, array) {
+            element.style.display = "block";
+        }
+    ); 
+
+    function showHide(id) {
+        var paths = [];
+
+        for (var i=0; i < {{ quantity }}; i++) {
+            {% for path, item, folderFlag, id, base in itemZip %}
+            paths.push("{{ path }}{{ item }}"); 
+            {% endfor %}
+        }
+
+        Array.from(document.getElementsByClassName(paths[id])).forEach(
+            function(element, index, array) {
+                if (element.style.display == "none") {
+                    element.style.display = "block";
+                } else {
+                    Array.from(document.querySelectorAll('[class*="' + paths[id] + '"]')).forEach(
+                        function(recursiveElement, recursiveindex, recursivearray) {
+                            recursiveElement.style.display = "none";
+                        }
+                    );
+                }
+            }
+        ); 
+
+    }
+</script>
