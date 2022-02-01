@@ -65,30 +65,30 @@
         function(element, index, array) {
             element.style.display = "block";
         }
-    ); 
+    );
 
     function showHide(id) {
         var paths = [];
 
         for (var i=0; i < {{ quantity }}; i++) {
             {% for path, item, folderFlag, id, base in itemZip %}
-            paths.push("{{ path }}{{ item }}"); 
+            paths.push("{{ path }}{{ item }}");
             {% endfor %}
         }
 
-        Array.from(document.getElementsByClassName(paths[id])).forEach(
-            function(element, index, array) {
-                if (element.style.display == "none") {
-                    element.style.display = "block";
-                } else {
-                    Array.from(document.querySelectorAll('[class*="' + paths[id] + '"]')).forEach(
-                        function(recursiveElement, recursiveindex, recursivearray) {
-                            recursiveElement.style.display = "none";
-                        }
-                    );
-                }
+        var folder = document.getElementsByClassName(paths[id]);
+        for (i = 0; i < folder.length; i++) {
+            if (folder[i].style.display == "none") {
+                folder[i].style.display = "block";
+            } else {
+                folder[i].style.display = "none";
+/*                if (i == 0) {
+                    childFolder = document.querySelectorAll('[class*="' + paths[id] + '"]');
+                    for (var j = 0; j < childFolder.length; j++){
+                        childFolder[j].style.display = "none";
+                    }
+                }*/
             }
-        ); 
-
+        }
     }
 </script>

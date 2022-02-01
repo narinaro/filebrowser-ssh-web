@@ -9,7 +9,8 @@ content = ""
 itemZip = []
 baseZip = []
 pathBase = []
-quantity = 0 
+quantity = 0
+
 
 def ide(request):
 
@@ -19,13 +20,16 @@ def ide(request):
 
     connectSSH(request)
 
-    return render(request, 'ide.html',
-                      {
-                      # Items with path and openFlag 
-                       'itemZip':                  itemZip,
-                       'quantity':                 quantity
+    return render(
+        request,
+        "ide.html",
+        {
+            # Items with path and openFlag
+            "itemZip": itemZip,
+            "quantity": quantity,
+        },
+    )
 
-                       })
 
 def connectSSH(request):
 
@@ -34,33 +38,32 @@ def connectSSH(request):
     global pathBase
     global quantity
 
-# Get login credentials (session variable)
-    serverRequest   = request.session['server']
-    userRequest     = request.session['user']
-    portRequest     = request.session['port']
-    passwordRequest = request.session['password']
+    # Get login credentials (session variable)
+    serverRequest = request.session["server"]
+    userRequest = request.session["user"]
+    portRequest = request.session["port"]
+    passwordRequest = request.session["password"]
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     client.connect(
-            serverRequest,
-            username = userRequest,
-            port     = portRequest,
-            password = passwordRequest
-        )
-    
-# Get list of subfiles and subfolders
-    getParameter = request.GET.get('folder','')
+        serverRequest, username=userRequest, port=portRequest, password=passwordRequest
+    )
+
+    # Get list of subfiles and subfolders
+    getParameter = request.GET.get("folder", "")
     if getParameter[-1] == "/":
         getParameter = getParameter[:-1]
-    lastOcc = getParameter.rfind("/") 
-    getPath = getParameter[:lastOcc + 1]
-    getFolder = getParameter[lastOcc + 1:]
+    lastOcc = getParameter.rfind("/")
+    getPath = getParameter[: lastOcc + 1]
+    getFolder = getParameter[lastOcc + 1 :]
 
-    command = "cd {} && ls -pR {} | awk '{}' ".format(getPath, getFolder, '!NF{$0=";"}1')
+    command = "cd {} && ls -pR {} | awk '{}' ".format(
+        getPath, getFolder, '!NF{$0=";"}1'
+    )
     stdin, stdout, stderr = client.exec_command(command)
     answer = stdout.read().decode("utf8")
-    array = answer.split(';')
-    
+    array = answer.split(";")
+
     response = []
 
     for i in array:
@@ -76,7 +79,7 @@ def connectSSH(request):
     counter = 0
     lastOcc = 0
 
-    # Map items to list 
+    # Map items to list
     for element in response:
 
         # Check if this is the first item -> Base Dir or not
@@ -90,12 +93,12 @@ def connectSSH(request):
             for j in range(2, len(element)):
 
                 # String together item and its path
-                curr = path + element[j] 
+                curr = path + element[j]
                 items.append(curr)
 
                 # This is used in JS to map paths to ID's
                 idCounter.append(counter)
-                counter += 1    
+                counter += 1
 
                 # This is not a base item
                 baseDir.append("0")
@@ -104,13 +107,13 @@ def connectSSH(request):
             # These are the base items, there is no path, first is empty
             for j in range(1, len(element)):
 
-                # Add items 
-                curr = getFolder + ":" + element[j] 
+                # Add items
+                curr = getFolder + ":" + element[j]
                 items.append(curr)
 
                 # This is used in JS to map paths to ID's
                 idCounter.append(counter)
-                counter += 1    
+                counter += 1
 
                 # This is a base item
                 baseDir.append("1")
@@ -123,19 +126,17 @@ def connectSSH(request):
             folderFlag.append("0")
         lastOcc = i.rfind(":")
         itemsWithPath.append(i[:lastOcc] + "/")
-        itemNames.append(i[lastOcc + 1:])
-    
+        itemNames.append(i[lastOcc + 1 :])
 
     quantity = len(itemNames)
     itemZip = list(zip(itemsWithPath, itemNames, folderFlag, idCounter, baseDir))
 
-    #for i in range(len(responseFolderPathsArray)):
+    # for i in range(len(responseFolderPathsArray)):
     #    while responseFolderPathsArray[i][1] == "/":
     #        responseFolderPathsArray[i] = responseFolderPathsArray[i][1:]
-#
-#    for i in range(len(responseFoldersArray)):
-#        while responseFoldersArray[i][1] == "/":
-#            responseFoldersArray[i] = responseFoldersArray[i][1:]
+    #
+    #    for i in range(len(responseFoldersArray)):
+    #        while responseFoldersArray[i][1] == "/":
+    #            responseFoldersArray[i] = responseFoldersArray[i][1:]
 
     client.close()
-
