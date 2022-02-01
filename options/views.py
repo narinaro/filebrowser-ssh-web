@@ -14,6 +14,7 @@ userRequest = ""
 portRequest = ""
 passwordRequest = ""
 
+
 def options(request):
 
     global client
@@ -22,42 +23,42 @@ def options(request):
     global portRequest
     global passwordRequest
 
-# Get Login Credentials (Session Variable)
-    serverRequest   = request.session['server']
-    userRequest     = request.session['user']
-    portRequest     = request.session['port']
-    passwordRequest = request.session['password']
+    # Get Login Credentials (Session Variable)
+    serverRequest = request.session["server"]
+    userRequest = request.session["user"]
+    portRequest = request.session["port"]
+    passwordRequest = request.session["password"]
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     client.connect(
-            serverRequest,
-            username = userRequest,
-            port     = portRequest,
-            password = passwordRequest
-        )
+        serverRequest, username=userRequest, port=portRequest, password=passwordRequest
+    )
 
-    if request.POST.get('delete', '') == "1":
+    if request.POST.get("delete", "") == "1":
         deleteElement(request)
-    elif request.POST.get('create', '') == "1":
+    elif request.POST.get("create", "") == "1":
         createElement(request)
-    elif request.POST.get('upload', '') == "1":
+    elif request.POST.get("upload", "") == "1":
         uploadHandling(request)
-    elif request.POST.get('rename', '') == "1":
+    elif request.POST.get("rename", "") == "1":
         renameElement(request)
-    elif request.POST.get('exec', '') == "1":
+    elif request.POST.get("exec", "") == "1":
         execCommand(request)
-    elif request.POST.get('download', '') == "1":
+    elif request.POST.get("download", "") == "1":
         response = downloadHandling(request)
         if response:
             return response
 
-
     client.close()
-    link = 'http://sshide.de/filebrowser/?folder={}'.format(request.POST.get('path',''))
+    link = "http://sshide.de/filebrowser/?folder={}".format(
+        request.POST.get("path", "")
+    )
 
     return redirect(link)
 
+
 def downloadHandling(request):
+
     global client
     global serverRequest
     global userRequest
@@ -71,7 +72,7 @@ def downloadHandling(request):
     for i in request.POST:
         if request.POST[i] == "1element":
             elements.append(i)
-            if i[0] == "/":
+            if i[-1] == "/":
                 folderFlag = 1
 
     if len(elements) > 0:
@@ -81,67 +82,80 @@ def downloadHandling(request):
                     elementString = elementString + " " + element[1:]
                 else:
                     elementString = elementString + " " + element
-            command = "cd {} && zip -r files.zip{}".format(request.POST.get('path'), elementString)
+            command = "cd {} && zip -r files.zip{}".format(
+                request.POST.get("path"), elementString
+            )
             stdin, stdout, stderr = client.exec_command(command)
             elements[0] = "files.zip"
 
         ftp_client = client.open_sftp()
-        localPath = '/home/sftp_web_project/sftp_web/media/{}'.format(elements[0])
-        remotePath = '{}{}'.format(request.POST.get('path'), elements[0])
+        localPath = "/home/sftp_web_project/sftp_web/media/{}".format(elements[0])
+        remotePath = "{}{}".format(request.POST.get("path"), elements[0])
         ftp_client.get(remotePath, localPath)
         ftp_client.close()
-        response = StreamingHttpResponse(FileWrapper(open(localPath, 'rb'), 8192),
-        content_type = mimetypes.guess_type(localPath)[0])
-        response['Content-Length'] = os.path.getsize(localPath)
-        response['Content-Disposition'] = "Attachment;filename={}".format(elements[0])
+        if len(elements) > 1 or folderFlag == 1:
+            client.exec_command(
+                "cd {} && rm files.zip".format(request.POST.get("path", ""))
+            )
+        response = StreamingHttpResponse(
+            FileWrapper(open(localPath, "rb"), 8192),
+            content_type=mimetypes.guess_type(localPath)[0],
+        )
+        response["Content-Length"] = os.path.getsize(localPath)
+        response["Content-Disposition"] = "Attachment;filename={}".format(elements[0])
         os.remove(localPath)
         return response
+
 
 def uploadHandling(request):
     global client
 
-    uploadedFiles = request.FILES.getlist('document')
+    uploadedFiles = request.FILES.getlist("document")
     for file in uploadedFiles:
         fs = FileSystemStorage()
-        file.name = file.name.replace("/","")
-        file.name = file.name.replace(" ","")
+        file.name = file.name.replace("/", "")
+        file.name = file.name.replace(" ", "")
         file.name = file.name.replace("\\", "")
         file.name = file.name.replace("(", "")
         file.name = file.name.replace(")", "")
         fs.save(file.name, file)
         ftp_client = client.open_sftp()
-        localPath = '/home/sftp_web_project/sftp_web/media/{}'.format(file.name)
-        remotePath = '{}{}'.format(request.POST.get('path',''), file.name)
+        localPath = "/home/sftp_web_project/sftp_web/media/{}".format(file.name)
+        remotePath = "{}{}".format(request.POST.get("path", ""), file.name)
         ftp_client.put(localPath, remotePath)
         ftp_client.close()
         os.remove(localPath)
 
+
 def createElement(request):
     global client
 
-    if request.POST.get('newFile', ''):
-            fileName = request.POST.get('newFile', '')
-            command = "sudo touch {}{}".format(request.POST.get('path',''), fileName)
-            stdin, stdout, stderr = client.exec_command(command)
-            stdin.write(passwordRequest)
+    if request.POST.get("newFile", ""):
+        fileName = request.POST.get("newFile", "")
+        command = "touch {}{}".format(request.POST.get("path", ""), fileName)
+        stdin, stdout, stderr = client.exec_command(command)
     else:
-            folderName = request.POST.get('newFolder', '')
-            command = "sudo mkdir {}{}".format(request.POST.get('path',''), folderName)
-            stdin, stdout, stderr = client.exec_command(command)
-            stdin.write(passwordRequest)
+        folderName = request.POST.get("newFolder", "")
+        command = "mkdir {}{}".format(request.POST.get("path", ""), folderName)
+        stdin, stdout, stderr = client.exec_command(command)
+
 
 def deleteElement(request):
     global client
 
     for i in request.POST:
-        if request.POST[i] == "1file":
-            command = "sudo rm {}".format(i)
-            stdin, stdout, stderr = client.exec_command(command)
-            stdin.write(passwordRequest)
-        elif request.POST[i] == "1folder":
-            command = "sudo rm -r {}".format(i)
-            stdin, stdout, stderr = client.exec_command(command)
-            stdin.write(passwordRequest)
+        print(i)
+        print(request.POST[i])
+        if request.POST[i] == "1element":
+            if i[-1] != "/":
+                command = "rm {}".format(i)
+                stdin, stdout, stderr = client.exec_command(command)
+            else:
+                command = "rm -r {}".format(i[:-1])
+                print(command)
+                stdin, stdout, stderr = client.exec_command(command)
+                print(stdout)
+
 
 def renameElement(request):
     global client
@@ -155,12 +169,20 @@ def renameElement(request):
             renameElement.append(i)
 
     if len(renameElement) == 1:
-        command = "mv {}{} {}{}".format(request.POST.get('path', ''), renameElement[0], request.POST.get('path', ''), request.POST.get('newName', ''))
+        command = "mv {}{} {}{}".format(
+            request.POST.get("path", ""),
+            renameElement[0],
+            request.POST.get("path", ""),
+            request.POST.get("newName", ""),
+        )
         stdin, stdout, stderr = client.exec_command(command)
+
 
 def execCommand(request):
     global client
 
-    if request.POST.get('command', ''):
-        command = "cd {} && {}".format(request.POST.get('path', ''), request.POST.get('command', ''))
+    if request.POST.get("command", ""):
+        command = "cd {} && {}".format(
+            request.POST.get("path", ""), request.POST.get("command", "")
+        )
         stdin, stdout, stderr = client.exec_command(command)
