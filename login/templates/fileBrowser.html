@@ -291,15 +291,26 @@
 
     function selectAll() {
 
+      uncheckAll = 0;
+
       if (quantity > 0) {
         for (var i = 0; i <= quantity; i++){
           chkBox = document.getElementById(i);
           if (!chkBox.checked){
             chkBox.checked = true;
           } else {
-            chkBox.checked = false;
+            uncheckAll = 1;
+            break;
           }
         }
+          if (uncheckAll === 1) {
+              for (i = 0; i <= quantity; i++) {
+                  chkBox = document.getElementById(i);
+                  if (chkBox.checked){
+                    chkBox.checked = false;
+                  }
+              }
+          }
       }
     }
 
@@ -365,7 +376,7 @@
       if (renameFlag > 1){
         alert("Please select only one item!");
       } else if (renameFlag < 1){
-        alert("Please select an item!")
+        alert("Please select an item!");
       }
     }
 

@@ -127,16 +127,8 @@ def connectSSH(request):
         lastOcc = i.rfind(":")
         itemsWithPath.append(i[:lastOcc] + "/")
         itemNames.append(i[lastOcc + 1 :])
-
+    print(baseDir)
     quantity = len(itemNames)
     itemZip = list(zip(itemsWithPath, itemNames, folderFlag, idCounter, baseDir))
-
-    # for i in range(len(responseFolderPathsArray)):
-    #    while responseFolderPathsArray[i][1] == "/":
-    #        responseFolderPathsArray[i] = responseFolderPathsArray[i][1:]
-    #
-    #    for i in range(len(responseFoldersArray)):
-    #        while responseFoldersArray[i][1] == "/":
-    #            responseFoldersArray[i] = responseFoldersArray[i][1:]
 
     client.close()

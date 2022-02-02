@@ -23,7 +23,7 @@
                 <form action="http://sshide.de/ide/" method="get">
                   <input type="hidden" name="folder" value="{{ currpath }}">
                   <input type="hidden" name="file" value="{{ item }}">
-                  <button id="{{ id }}" class="{{ path }}" type="submit">{{ item }}</button>
+                  <button id="{{ id }}" {% if base == "1" %}class="base"{% else %}class="{{ path }}"{% endif %} type="submit">{{ item }}</button>
                 </form>
             </div>
             {% else %}
@@ -69,6 +69,7 @@
 
     function showHide(id) {
         var paths = [];
+        var collapse = 0;
 
         for (var i=0; i < {{ quantity }}; i++) {
             {% for path, item, folderFlag, id, base in itemZip %}
@@ -81,14 +82,17 @@
             if (folder[i].style.display == "none") {
                 folder[i].style.display = "block";
             } else {
-                folder[i].style.display = "none";
-/*                if (i == 0) {
-                    childFolder = document.querySelectorAll('[class*="' + paths[id] + '"]');
-                    for (var j = 0; j < childFolder.length; j++){
-                        childFolder[j].style.display = "none";
-                    }
-                }*/
+                collapse = 1;
+                break;
+            }
+        }
+
+        if (collapse === 1) {
+            childFolder = document.querySelectorAll('[class*="' + paths[id] + '"]');
+            for (var j = 0; j < childFolder.length; j++){
+                childFolder[j].style.display = "none";
             }
         }
     }
+
 </script>

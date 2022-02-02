@@ -144,17 +144,13 @@ def deleteElement(request):
     global client
 
     for i in request.POST:
-        print(i)
-        print(request.POST[i])
         if request.POST[i] == "1element":
             if i[-1] != "/":
-                command = "rm {}".format(i)
+                command = f"cd {request.POST.get('path', '')} && rm {i}"
                 stdin, stdout, stderr = client.exec_command(command)
             else:
-                command = "rm -r {}".format(i[:-1])
-                print(command)
+                command = f"cd {request.POST.get('path', '')} && rm -r {i}"
                 stdin, stdout, stderr = client.exec_command(command)
-                print(stdout)
 
 
 def renameElement(request):
@@ -163,9 +159,7 @@ def renameElement(request):
     renameElement = []
 
     for i in request.POST:
-        if request.POST[i] == "1folder":
-            renameElement.append(i[1:])
-        elif request.POST[i] == "1file":
+        if request.POST[i] == "1element":
             renameElement.append(i)
 
     if len(renameElement) == 1:
