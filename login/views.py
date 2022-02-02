@@ -55,4 +55,4 @@ def login(request):
         finally:
             client.close()
 
-        return redirect("filebrowser/")
+        return redirect("filebrowser/?folder=/")
