@@ -112,16 +112,18 @@
       <input type="submit" name="" value="Execute">
     </form>
 
+    <input type="text" onKeyPress="searchElements()" onKeyUp="searchElements()" id="searchInput" placeholder="Search">
+
   </div>
   <div class="elements">
     <div class="grid">
       {% for item, folderFlag, counter in itemsZip %}
           {% if folderFlag == "1" %}
             <div class="folders">
-              <form action="" method="get">
+                <form action="" method="get">
                   <input type="hidden" name="folder" value="{{ path }}{{ item }}">
                 <input class="{{ item }}" id="{{ counter }}" type="checkbox">
-                <button type="submit">
+                <button id="search_{{ item }}" type="submit">
                   <img src="https://img.icons8.com/fluency/48/000000/folder-invoices--v2.png"/>
                   <p id="{{ item }}_text">{{ item }}</p>
                 </button>
@@ -133,7 +135,7 @@
                 <input type="hidden" name="file" value="{{ item }}">
                 <input type="hidden" name="folder" value="{{ path }}">
                 <input class="{{ item }}" id="{{ counter }}" type="checkbox">
-                <button type="submit">
+                <button id="search_{{ item }}" type="submit">
                   <img id="{{ item }}_img" />
                   <p id="{{ item }}_text">{{ item }}</p>
                 </button>
@@ -172,7 +174,13 @@
 
     var quantity = {{ counter }};
 
-    document.getElementById('selectAll').style.display = 'none';
+    var idNames = [];
+    for (var i = 0; i < quantity; i++){
+        {% for item, folderFlag, counter in itemsZip %}
+        idNames.push("{{ item  }}");
+        {% endfor %}
+    }
+
     document.getElementById('newFile').style.display = 'none';
     document.getElementById('newFolder').style.display = 'none';
     document.getElementById('deleteSubmit').style.display = 'none';
@@ -180,12 +188,36 @@
     document.getElementById('renameSubmit').style.display = 'none';
     document.getElementById('renameInput').style.display = 'none';
     document.getElementById('uploadForm').style.display = 'none';
+    document.getElementById('selectAll').style.display = 'none';
 
 
     if (quantity > 0) {
         for (var i = 0; i <= quantity; i++) {
             document.getElementById(i).style.display = 'none';
         }
+    }
+
+    function searchElements() {
+
+        var query = document.getElementById('searchInput').value;
+
+        if (query === "") {
+            for (var i = 0; i < quantity; i++) {
+                document.getElementById("search_" + idNames[i]).style.display = 'block';
+            }
+        } else {
+            for (var i = 0; i < quantity; i++) {
+                document.getElementById("search_" + idNames[i]).style.display = 'none';
+            }
+
+            var searchElementsArray = document.querySelectorAll('[id*="' + "search_" + query  + '"]');
+
+            for (i = 0; i < searchElementsArray.length; i++) {
+                searchElementsArray[i].style.display = 'block';
+            }
+        }
+
+
     }
 
     function select(){
