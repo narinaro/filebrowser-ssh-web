@@ -1,0 +1,13 @@
+{
+    "configurations": {
+        "test":{
+            "adapter": "vscode-python",
+            "configuration": {
+                "name": "this is a python test",
+                "type": "python",
+                "request": "launch",
+                "python.pythonPath": "~/bin/python",
+            }
+        }
+    }
+}
