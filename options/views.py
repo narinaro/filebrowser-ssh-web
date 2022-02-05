@@ -1,8 +1,6 @@
-from django.http import HttpResponse, StreamingHttpResponse
+from django.http import StreamingHttpResponse
 import paramiko
-from login.models import login_parameters
-from django.shortcuts import render, redirect
-from .forms import UploadFileForm
+from django.shortcuts import redirect
 from django.core.files.storage import FileSystemStorage
 from wsgiref.util import FileWrapper
 import mimetypes

@@ -1,11 +1,10 @@
-from django.http import HttpResponse
 from paramiko import SSHClient, AutoAddPolicy
-from login.models import login_parameters
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 
 serverRequest = ""
 counter = 0
 itemsZip = []
+path = ""
 
 
 def fileBrowser(request):
@@ -13,6 +12,13 @@ def fileBrowser(request):
     global serverRequest
     global counter
     global itemsZip
+    global path
+
+    # when path is empty open root dir
+    if request.GET.get("folder", "") == "":
+        path = "/"
+    else:
+        path = request.GET.get("folder", "")
 
     # connect to server and get folders/files
     conSshAndMap(request)
@@ -24,7 +30,7 @@ def fileBrowser(request):
             "itemsZip": itemsZip,
             "counter": counter,
             # Current Path
-            "path": request.GET.get("folder", ""),
+            "path": path,
             # IP
             "IP": serverRequest,
         },
@@ -36,6 +42,7 @@ def conSshAndMap(request):
     global itemsZip
     global counter
     global serverRequest
+    global path
 
     client = SSHClient()
 
@@ -46,11 +53,12 @@ def conSshAndMap(request):
     passwordRequest = request.session["password"]
     client.set_missing_host_key_policy(AutoAddPolicy())
 
+    # connect to server via ssh
     client.connect(
         serverRequest, username=userRequest, port=portRequest, password=passwordRequest
     )
-    path = request.GET.get("folder", "")
 
+    # get files and folders of path
     command = "ls -p {}".format(path)
     stdin, stdout, stderr = client.exec_command(command)
     answer = stdout.read().decode("utf8")

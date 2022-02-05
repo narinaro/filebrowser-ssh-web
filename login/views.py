@@ -1,8 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, request
 import paramiko
-from .models import login_parameters
-from django.db.models import Max
 
 
 def login(request):

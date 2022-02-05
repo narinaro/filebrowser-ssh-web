@@ -127,7 +127,6 @@ def connectSSH(request):
         lastOcc = i.rfind(":")
         itemsWithPath.append(i[:lastOcc] + "/")
         itemNames.append(i[lastOcc + 1 :])
-    print(baseDir)
     quantity = len(itemNames)
     itemZip = list(zip(itemsWithPath, itemNames, folderFlag, idCounter, baseDir))
 
