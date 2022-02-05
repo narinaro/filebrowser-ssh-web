@@ -56,78 +56,60 @@ def connectSSH(request):
     lastOcc = getParameter.rfind("/")
     getPath = getParameter[: lastOcc + 1]
     getFolder = getParameter[lastOcc + 1 :]
+    curlyBrackets = "{}"
+    insert = '"%s/\n" "$0"'
 
-    command = "cd {} && ls -pR {} | awk '{}' ".format(
-        getPath, getFolder, '!NF{$0=";"}1'
-    )
+    command = f"cd {getPath} && find {getFolder} -type d -exec sh -c 'printf {insert}' {curlyBrackets} \; -or -print"
     stdin, stdout, stderr = client.exec_command(command)
     answer = stdout.read().decode("utf8")
-    array = answer.split(";")
 
-    response = []
-
-    for i in array:
-        response.append(i.splitlines())
-
-    items = []
-    itemNames = []
-    itemsWithPath = []
-    folderFlag = []
-    baseDir = []
-    skip = 0
+    items = answer.splitlines()
     idCounter = []
+    baseDir = []
     counter = 0
-    lastOcc = 0
+    itemNames = []
+    folderFlag = []
+    itemPaths = []
 
-    # Map items to list
-    for element in response:
-
-        # Check if this is the first item -> Base Dir or not
-        if skip == 1:
-
-            # First item of element is empty, second is folder/path
-            path = element[1]
-
-            # Iterate through items of response element
-            # Begin at 2 to skip folder/path
-            for j in range(2, len(element)):
-
-                # String together item and its path
-                curr = path + element[j]
-                items.append(curr)
-
-                # This is used in JS to map paths to ID's
-                idCounter.append(counter)
-                counter += 1
-
-                # This is not a base item
-                baseDir.append("0")
-        else:
-
-            # These are the base items, there is no path, first is empty
-            for j in range(1, len(element)):
-
-                # Add items
-                curr = getFolder + ":" + element[j]
-                items.append(curr)
-
-                # This is used in JS to map paths to ID's
-                idCounter.append(counter)
-                counter += 1
-
-                # This is a base item
-                baseDir.append("1")
-            skip = 1
+    items.pop(0)
 
     for i in items:
-        if i[-1] == "/":
-            folderFlag.append("1")
-        else:
-            folderFlag.append("0")
-        lastOcc = i.rfind(":")
-        itemsWithPath.append(i[:lastOcc] + "/")
-        itemNames.append(i[lastOcc + 1 :])
-    quantity = len(itemNames)
-    itemZip = list(zip(itemsWithPath, itemNames, folderFlag, idCounter, baseDir))
+        if (i.count("/") == 2 and i[-1] == "/") or i.count("/") == 1:
+            lastOcc = i[:-1].rfind("/")
+            itemNames.append(i[lastOcc + 1 :])
+            itemPaths.append(i[: lastOcc + 1])
 
+            # This is used in JS to map paths to ID's
+            idCounter.append(counter)
+            counter += 1
+
+            # This is a base item
+            baseDir.append("1")
+
+            # folder or not
+            if i[-1] == "/":
+                folderFlag.append("1")
+            else:
+                folderFlag.append("0")
+
+        else:
+            lastOcc = i[:-1].rfind("/")
+            itemNames.append(i[lastOcc + 1 :])
+            itemPaths.append(i[: lastOcc + 1])
+
+            # This is used in JS to map paths to ID's
+            idCounter.append(counter)
+            counter += 1
+
+            # This is a base item
+            baseDir.append("0")
+
+            # folder or not
+            if i[-1] == "/":
+                folderFlag.append("1")
+            else:
+                folderFlag.append("0")
+
+    quantity = counter
+    itemZip = list(zip(itemPaths, itemNames, folderFlag, idCounter, baseDir))
     client.close()
