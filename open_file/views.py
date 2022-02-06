@@ -44,7 +44,7 @@ def openFile(request):
 
         # Save file
         if request.POST.get("content", ""):
-            command = 'echo "{}" > {}'.format(
+            command = 'echo -n "{}" > {}'.format(
                 request.POST.get("content", ""), request.POST.get("path", "")
             )
             stdin, stdout, stderr = client.exec_command(command)

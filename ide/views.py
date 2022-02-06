@@ -17,8 +17,18 @@ def ide(request):
     global client
     global itemZip
     global quantity
+    global content
+
+    if request.method == "POST":
+        saveContent(request)
+        return HttpResponse("true")
 
     connectSSH(request)
+
+    if request.GET.get("file", ""):
+        getContent(request)
+    else:
+        content = "Select a file"
 
     return render(
         request,
@@ -27,6 +37,9 @@ def ide(request):
             # Items with path and openFlag
             "itemZip": itemZip,
             "quantity": quantity,
+            "content": content,
+            "currpath": request.GET.get("folder", ""),
+            "currfile": request.GET.get("file", ""),
         },
     )
 
@@ -110,6 +123,59 @@ def connectSSH(request):
             else:
                 folderFlag.append("0")
 
+    margin = []
+    for i in itemPaths:
+        qSlashes = i.count("/")
+        if i[-1] == "/":
+            margin.append((qSlashes - 2) * 20)
+        else:
+            margin.append((qSlashes - 1) * 20)
+
     quantity = counter
-    itemZip = list(zip(itemPaths, itemNames, folderFlag, idCounter, baseDir))
+    itemZip = list(zip(itemPaths, itemNames, folderFlag, idCounter, baseDir, margin))
     client.close()
+
+
+def getContent(request):
+    global content
+    global client
+
+    # Get login credentials (session variable)
+    serverRequest = request.session["server"]
+    userRequest = request.session["user"]
+    portRequest = request.session["port"]
+    passwordRequest = request.session["password"]
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    client.connect(
+        serverRequest, username=userRequest, port=portRequest, password=passwordRequest
+    )
+
+    path = request.GET.get("folder", "")
+    file = request.GET.get("file", "")
+    command = f"cd {path} && cat {file}"
+    stdin, stdout, stderr = client.exec_command(command)
+    content = stdout.read().decode("utf8")
+
+
+def saveContent(request):
+
+    global content
+    global client
+
+    # Get login credentials (session variable)
+    serverRequest = request.session["server"]
+    userRequest = request.session["user"]
+    portRequest = request.session["port"]
+    passwordRequest = request.session["password"]
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    client.connect(
+        serverRequest, username=userRequest, port=portRequest, password=passwordRequest
+    )
+
+    file = request.POST.get("file", "")
+    update = request.POST.get("content", "")
+    command = f"echo -n '{update}' > {file}"
+    print(command)
+    stdin, stdout, stderr = client.exec_command(command)

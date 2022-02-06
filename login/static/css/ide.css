@@ -16,14 +16,11 @@ body {
     width: 200px;
     height: 800px;
     float:left; /* add this */
-    border: 1px solid #CFD9E4;
-    border-radius: 10px;
     color: #CFD9E4;
 }
 #editor {
-    border: 1px solid #CFD9E4;
-    border-radius: 10px;
 
+    height: 800px;
     overflow: hidden; /* if you don't want #second to wrap below #first */
 }
 
