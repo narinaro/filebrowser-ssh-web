@@ -1,6 +1,6 @@
 from paramiko import SSHClient, AutoAddPolicy
 from django.shortcuts import render
-import json
+from .con_ssh import ConSSH as ssh
 
 serverRequest = ""
 counter = 0
@@ -10,7 +10,6 @@ path = ""
 
 def fileBrowser(request):
 
-    global serverRequest
     global counter
     global itemsZip
     global path
@@ -21,8 +20,22 @@ def fileBrowser(request):
     else:
         path = request.GET.get("folder", "")
 
-    # connect to server and get folders/files
-    conSshAndMap(request)
+    # set connection credentials 
+    connection = ssh(
+        request.session["server"],
+        request.session["user"],
+        request.session["port"],
+        request.session["password"],
+    )
+
+    # set up ssh connection
+    connection.connect()
+
+    # get items an fill lists
+    getItems(request, connection)
+
+    # close connection
+    connection.closeConn()
 
     return render(
         request,
@@ -33,36 +46,20 @@ def fileBrowser(request):
             # Current Path
             "path": path,
             # IP
-            "IP": serverRequest,
+            "IP": connection.server,
         },
     )
 
 
-def conSshAndMap(request):
+def getItems(request, connection):
 
     global itemsZip
     global counter
-    global serverRequest
     global path
-
-    client = SSHClient()
-
-    # Get login credentials (session variable)
-    serverRequest = request.session["server"]
-    userRequest = request.session["user"]
-    portRequest = request.session["port"]
-    passwordRequest = request.session["password"]
-    client.set_missing_host_key_policy(AutoAddPolicy())
-
-    # connect to server via ssh
-    client.connect(
-        serverRequest, username=userRequest, port=portRequest, password=passwordRequest
-    )
 
     # get files and folders of path
     command = "ls -p {}".format(path)
-    stdin, stdout, stderr = client.exec_command(command)
-    answer = stdout.read().decode("utf8")
+    answer = connection.commandExec(command)
 
     items = []
     items = answer.splitlines()
@@ -81,5 +78,3 @@ def conSshAndMap(request):
         counter += 1
 
     itemsZip = list(zip(items, folderFlag, idCounter))
-
-    client.close()
