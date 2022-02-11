@@ -57,7 +57,7 @@ def getItems(request, connection):
     global path
 
     # get files and folders of path
-    command = "ls -p {}".format(path)
+    command = f"ls -p {path}"
     answer = connection.commandExec(command)
 
     items = []
