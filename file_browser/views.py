@@ -2,8 +2,7 @@ from paramiko import SSHClient, AutoAddPolicy
 from django.shortcuts import render
 from .con_ssh import ConSSH as ssh
 
-serverRequest = ""
-counter = 0
+counter = 0 
 itemsZip = []
 path = ""
 
