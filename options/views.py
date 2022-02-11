@@ -106,7 +106,7 @@ def uploadHandling(request, connection):
         fs.save(file.name, file)
         ftp_client = connection.client.open_sftp()
         localPath = f"/home/sftp_web_project/sftp_web/media/{file.name}"
-        remotePath = "{request.POST.get('path', '')}{file.name}"
+        remotePath = f"{request.POST.get('path', '')}{file.name}"
         ftp_client.put(localPath, remotePath)
         ftp_client.close()
         os.remove(localPath)

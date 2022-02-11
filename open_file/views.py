@@ -1,34 +1,32 @@
 from django.http import HttpResponse
-from paramiko import SSHClient, AutoAddPolicy
 from django.shortcuts import render, redirect
+from file_browser.con_ssh import ConSSH as ssh
 
 # Create your views here.
 
 
 def openFile(request):
-    client = SSHClient()
-
-    # Get login credentials (session variable)
-    serverRequest = request.session["server"]
-    userRequest = request.session["user"]
-    portRequest = request.session["port"]
-    passwordRequest = request.session["password"]
-    client.set_missing_host_key_policy(AutoAddPolicy())
-
-    client.connect(
-        serverRequest, username=userRequest, port=portRequest, password=passwordRequest
+    # set connection credentials
+    connection = ssh(
+        request.session["server"],
+        request.session["user"],
+        request.session["port"],
+        request.session["password"],
     )
+
+    # set up ssh connection
+    connection.connect()
 
     if request.GET.get("file", ""):
 
         # Get File content
         folder = request.GET.get("folder", "")
         file = folder + request.GET.get("file", "")
-        command = "sudo cat {}".format(file)
-        stdin, stdout, stderr = client.exec_command(command)
-        stdin.write(passwordRequest)
-        response_text = stdout.read().decode("utf8")
-        client.close()
+        command = f"cat {file}"
+        response_text = connection.commandExec(command)
+        # close connection
+        connection.closeConn()
+
         return render(
             request,
             "openFile.html",
@@ -47,12 +45,17 @@ def openFile(request):
             command = 'echo -n "{}" > {}'.format(
                 request.POST.get("content", ""), request.POST.get("path", "")
             )
-            stdin, stdout, stderr = client.exec_command(command)
-            stdin.write(passwordRequest)
-            client.close()
+            connection.commandExec(command)
+            connection.client.close()
             link = "http://sshide.de/filebrowser/?folder={}".format(
                 request.POST.get("folder", "")
             )
+            # close connection
+            connection.closeConn()
+
             return redirect(link)
     else:
+        # close connection
+        connection.closeConn()
+
         return HttpResponse("error")
