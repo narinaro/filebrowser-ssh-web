@@ -6,6 +6,10 @@ from wsgiref.util import FileWrapper
 import mimetypes
 import os
 from file_browser.con_ssh import ConSSH as ssh
+from django.conf import settings
+
+
+BASEDIR = settings.BASE_DIR
 
 
 def options(request):
@@ -73,7 +77,7 @@ def downloadHandling(request, connection):
             elements[0] = "files.zip"
 
         ftp_client = connection.client.open_sftp()
-        localPath = "/home/sftp_web_project/sftp_web/media/{}".format(elements[0])
+        localPath = f"{BASEDIR}/media/{elements[0]}"
         remotePath = "{}{}".format(request.POST.get("path"), elements[0])
         ftp_client.get(remotePath, localPath)
         ftp_client.close()
@@ -105,7 +109,7 @@ def uploadHandling(request, connection):
         file.name = file.name.replace(")", "")
         fs.save(file.name, file)
         ftp_client = connection.client.open_sftp()
-        localPath = f"/home/sftp_web_project/sftp_web/media/{file.name}"
+        localPath = f"{BASEDIR}/media/{file.name}"
         remotePath = f"{request.POST.get('path', '')}{file.name}"
         ftp_client.put(localPath, remotePath)
         ftp_client.close()

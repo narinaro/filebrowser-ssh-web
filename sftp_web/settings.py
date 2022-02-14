@@ -85,7 +85,7 @@ DATABASES = {
         "NAME": "django",
         "USER": "narinaro",
         "PASSWORD": "yk5Gi4*4rj9",
-        "HOST": "localhost",
+        "HOST": "81.169.151.227",
         "PORT": "3306",
     }
 }
@@ -127,9 +127,9 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-MEDIA_ROOT = "/home/sftp_web_project/sftp_web/media/"
+MEDIA_ROOT = f"{BASE_DIR}/media/"
 
-MEDIA_URL = "/home/sftp_web_project/sftp_web/media/"
+MEDIA_URL = f"{BASE_DIR}/media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
