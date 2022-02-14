@@ -2,7 +2,7 @@ from paramiko import SSHClient, AutoAddPolicy
 from django.shortcuts import render
 from .con_ssh import ConSSH as ssh
 
-counter = 0 
+counter = 0
 itemsZip = []
 path = ""
 
@@ -19,7 +19,7 @@ def fileBrowser(request):
     else:
         path = request.GET.get("folder", "")
 
-    # set connection credentials 
+    # set connection credentials
     connection = ssh(
         request.session["server"],
         request.session["user"],
