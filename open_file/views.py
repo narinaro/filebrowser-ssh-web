@@ -2,8 +2,6 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from file_browser.con_ssh import ConSSH as ssh
 
-# Create your views here.
-
 
 def openFile(request):
     # set connection credentials
@@ -41,19 +39,18 @@ def openFile(request):
     elif request.method == "POST":
 
         # Save file
-        if request.POST.get("content", ""):
-            command = 'echo -n "{}" > {}'.format(
-                request.POST.get("content", ""), request.POST.get("path", "")
-            )
-            connection.commandExec(command)
-            connection.client.close()
-            link = "http://sshide.de/filebrowser/?folder={}".format(
-                request.POST.get("folder", "")
-            )
-            # close connection
-            connection.closeConn()
+        command = 'echo -n "{}" > {}'.format(
+            request.POST.get("content", ""), request.POST.get("path", "")
+        )
+        connection.commandExec(command)
+        connection.client.close()
+        link = "http://sshide.de/filebrowser/?folder={}".format(
+            request.POST.get("folder", "")
+        )
+        # close connection
+        connection.closeConn()
 
-            return redirect(link)
+        return redirect(link)
     else:
         # close connection
         connection.closeConn()

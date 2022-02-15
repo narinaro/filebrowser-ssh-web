@@ -4,32 +4,37 @@
   <meta charset="utf-8">
   <title>SSH - File Browser</title>
   <meta name="author" content="DGR">
-  <script language="javascript" type="text/javascript" src="{% static 'editarea/edit_area/edit_area_full.js' %}"></script>
   <link rel="icon" href="https://img.icons8.com/color/48/000000/pen.png"/>
+  <link rel="stylesheet" href="{% static 'codemirror/theme/base16-dark.css' %}">
+  <script src="{% static 'codemirror/lib/codemirror.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'codemirror/lib/codemirror.css' %}">
+  <script src="{% static 'codemirror/mode/javascript/javascript.js' %}"></script>
 
 </head>
 
 <div class="openFile">
-  <textarea id="editor" rows="40" cols="80"></textarea>
-  <input type="hidden" id="hiddencontent" value="{{ content }}">
+  <div id="editor">
+    <textarea id="textArea" name="content" rows="8" cols="80">{{ content }}</textarea>
+  </div>
 
   <form class="button" action="http://sshide.de/open/" method="post">
-    <input id="edit" type="hidden" name="content">
     <input type="hidden" name="path" value="{{ path }}">
     <input type="hidden" name="folder" value="{{ folder }}">
+    <input id="contentContainer" type="hidden" name="content">
     <button onclick="updateContent()" type="submit">Save</button>
   </form>
-  <script src="{% static 'js/prism.js' %}"></script>
   <script type="text/javascript">
-    document.getElementById('editor').value = document.getElementById("hiddencontent").value;
-    editAreaLoader.init({
-      id : "editor"		// textarea id
-      ,syntax: "python"			// syntax to be uses for highgliting
-      ,start_highlight: true		// to display with highlight mode on start-up
+    var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("textArea"), {
+         value: "test",
+         mode: "javascript",
+         theme: "base16-dark",
+         lineNumbers: true
     });
 
+    myCodeMirror.setSize("100%", "100%");
+
     function updateContent() {
-      document.getElementById('edit').value = editAreaLoader.getValue('editor')
+        document.getElementById('contentContainer').value = myCodeMirror.getValue();
     }
   </script>
 </div>
