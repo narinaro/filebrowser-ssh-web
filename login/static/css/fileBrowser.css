@@ -32,19 +32,8 @@ h1 {
   padding: 10px;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  grid-gap: 10px;
-}
 
-.folders, .files {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.elements button {
+.icon {
   background: transparent;
   border: none;
 }
@@ -63,17 +52,13 @@ h1 {
   background: #fefbe9;
 }
 
-.files p, .folders p {
-  color: #AFBAC5;
-  font-size: 12pt;
-  margin:0;
-  padding:0;
-  margin-top: 0.5%;
-}
-
 .files img, .folders img {
   margin:0;
   padding:0;
+}
+
+.files p, .folders p {
+  color: #ffffff;
 }
 
 .menue {
@@ -95,14 +80,13 @@ h1 {
      border-radius: 10%;
      margin-right: 10px;
      height: 20pt;
+     white-space: nowrap;
 }
 
 .options button:hover {
      background:#1D2127;
      border-color: #2E333A;
      color: #f6c453;
-
-
 }
 
 .newElement {
