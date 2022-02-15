@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, request
+from django.http import HttpResponse
 import paramiko
 from django.db.models import Max
 
@@ -13,6 +13,9 @@ quantity = 0
 
 
 def ide(request):
+
+    if request.method != "POST" and request.method != "GET":
+        return HttpResponse("Error")
 
     global client
     global itemZip

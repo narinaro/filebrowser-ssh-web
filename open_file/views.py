@@ -4,6 +4,10 @@ from file_browser.con_ssh import ConSSH as ssh
 
 
 def openFile(request):
+
+    if request.method != "POST" and request.method != "GET":
+        return HttpResponse("Error")
+
     # set connection credentials
     connection = ssh(
         request.session["server"],

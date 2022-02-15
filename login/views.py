@@ -1,8 +1,13 @@
 from django.shortcuts import render, redirect
 import paramiko
+from django.http import HttpResponse
 
 
 def login(request):
+
+    if request.method != "POST" and request.method != "GET":
+        return HttpResponse("Error")
+
     if request.method == "GET":
         error = " "
         if request.GET.get("error", "") == "true":

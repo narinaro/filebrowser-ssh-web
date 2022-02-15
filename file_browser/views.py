@@ -1,6 +1,7 @@
 from paramiko import SSHClient, AutoAddPolicy
 from django.shortcuts import render
 from .con_ssh import ConSSH as ssh
+from django.http import HttpResponse
 
 counter = 0
 itemsZip = []
@@ -8,6 +9,9 @@ path = ""
 
 
 def fileBrowser(request):
+
+    if request.method != "POST" and request.method != "GET":
+        return HttpResponse("Error")
 
     global counter
     global itemsZip

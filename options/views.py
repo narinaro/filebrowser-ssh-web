@@ -1,4 +1,4 @@
-from django.http import StreamingHttpResponse
+from django.http import StreamingHttpResponse, HttpResponse
 import paramiko
 from django.shortcuts import redirect
 from django.core.files.storage import FileSystemStorage
@@ -13,6 +13,9 @@ BASEDIR = settings.BASE_DIR
 
 
 def options(request):
+
+    if request.method != "POST" and request.method != "GET":
+        return HttpResponse("Error")
 
     # set connection credentials
     connection = ssh(
