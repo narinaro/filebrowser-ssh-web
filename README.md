@@ -1,4 +1,4 @@
-# webide-django
+# SSH Filebrowser
 
 ## Simple Filebrowser (in dev.) based on SSH
 
