@@ -33,6 +33,8 @@ def ide(request):
     else:
         content = "Select a file"
 
+    dot_pos = request.GET.get("file", "").rfind(".")
+    file_ext = request.GET.get("file", "")[dot_pos + 1:]
     return render(
         request,
         "ide.html",
@@ -43,6 +45,7 @@ def ide(request):
             "content": content,
             "currpath": request.GET.get("folder", ""),
             "currfile": request.GET.get("file", ""),
+            "fileext": file_ext,
         },
     )
 

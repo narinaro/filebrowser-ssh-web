@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-z9*k%5n+w^h^8a-t-ua_+a!2^r0+91y7pqelr*)kicw0a8w9wa
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["sshide.de", "127.0.0.1"]
+ALLOWED_HOSTS = ["sshide.de", "127.0.0.1", "localhost",]
 
 
 # Application definition
@@ -60,7 +60,9 @@ ROOT_URLCONF = "sftp_web.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        'DIRS': [
+            f'{BASE_DIR}/static/html',
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -124,8 +126,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
-
-STATIC_URL = "static/"
+STATIC_URL = '/static/'
+STATICFILES_DIRS = (str(BASE_DIR.joinpath('static')),) # new
+STATIC_ROOT = str(BASE_DIR.joinpath('staticfiles')) # new
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage' # new
 
 MEDIA_ROOT = f"{BASE_DIR}/media/"
 

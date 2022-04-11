@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="utf-8">
+  <title>SSHIDE - File Browser & IDE</title>
+  <meta name="author" content="DGR">
+  <link rel="stylesheet" href="{% static 'css/ide.css' %}">
+  <link rel="icon" href="https://img.icons8.com/color/48/000000/pen.png"/>
+  <link rel="stylesheet" href="{% static 'codemirror/theme/base16-dark.css' %}">
+  <script src="{% static 'codemirror/lib/codemirror.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'codemirror/lib/codemirror.css' %}">
+  <script src="{% static 'codemirror/mode/javascript/javascript.js' %}"></script>
+</head>
+
+<div id="wrapper">
+  <div id="folderView">
+    <ul>
+        {% for path, item, folderFlag, id, base, margin in itemZip %}
+        <li>
+            {% if folderFlag == "0" %}
+            <div>
+                <form action="http://sshide.de/ide/" method="get">
+                  <input type="hidden" name="folder" value="{{ currpath }}">
+                      <input type="hidden" name="file" value="/{{ path }}{{ item }}">
+                  <button style="margin-left: {{ margin }}px" id="{{ id }}" {% if base == "1" %}class="base"{% else %}class="{{ path }}"{% endif %} type="submit">{{ item }}</button>
+                </form>
+            </div>
+            {% else %}
+            <div>
+                <button style="margin-left: {{ margin }}px" id="{{ id }}" {% if base == "1" %}class="base"{% else %}class="{{ path }}"{% endif %} onclick="showHide(this.id)">{{ item }}</button>
+            </div>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+  </div>
+
+  <div id="editor">
+    <textarea id="textArea" name="content" rows="8" cols="80">{{ content }}</textarea>
+  </div>
+  <div>
+      <button onclick="saveContent()">Save</button>
+  </div>
+</div>
+
+<script type="text/javascript">
+    var paths = [];
+
+    for (var i=0; i < {{ quantity }}; i++) {
+        {% for path, item, folderFlag, id, base, margin in itemZip %}
+        paths.push("{{ path }}{{ item }}");
+        {% endfor %}
+    }
+
+    for (var i = 0; i < {{ quantity }}; i ++) {
+        document.getElementById(i).style.display = 'none';
+    }
+
+    for (i = 0; i < {{ quantity }}; i++) {
+        var onloadFolder = document.getElementsByClassName(paths[i]);
+        for (j = 0; j < onloadFolder.length; j++ ) {
+            if (localStorage.getItem(paths[i]) === "true") {
+                onloadFolder[j].style.display = "block";
+            }
+        }
+    }
+
+    var file_ext = "{{ file_ext }}";
+
+    switch(file_ext) {
+        case "py": syntaxMode = "python"
+        break;
+        case "js": syntaxMode = "javascript"
+        break;
+        case "html": syntaxMode = "html"
+        break;
+        case "txt": syntaxMode = "html"
+        break;
+    }
+
+    var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("textArea"), {
+         value: "test",
+         mode: "javascript",
+         theme: "base16-dark",
+         lineNumbers: true
+    });
+
+    myCodeMirror.setSize("100%", "100%");
+
+    Array.from(document.getElementsByClassName("base")).forEach(
+        function(element, index, array) {
+            element.style.display = "block";
+        }
+    );
+
+    function showHide(id) {
+        var collapse = 0;
+
+        var folder = document.getElementsByClassName(paths[id]);
+        for (i = 0; i < folder.length; i++) {
+            if (folder[i].style.display == "none") {
+                folder[i].style.display = "block";
+                localStorage.setItem(paths[id], 'true');
+            } else {
+                collapse = 1;
+                break;
+            }
+        }
+
+        if (collapse === 1) {
+            childFolder = document.querySelectorAll('[class*="' + paths[id] + '"]');
+            for (var j = 0; j < childFolder.length; j++){
+                childFolder[j].style.display = "none";
+                localStorage.setItem(childFolder[j].className, '');
+            }
+        }
+    }
+
+    function saveContent() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://sshide.de/ide/", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        content = myCodeMirror.getValue();
+        data = "content=" + content + "&file={{ currfile }}";
+        xhr.send(data);
+    }
+
+</script>

@@ -1,0 +1,39 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SSH - File Browser</title>
+  <meta name="author" content="DGR">
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+
+<body>
+  <div class="center">
+    <header>
+        <div class="title">
+            <h1>File Browser</h1>
+            <p>Simple File Browser based on SSH.</p>
+        </div>
+    </header>
+    <main>
+      <div class="Error">
+        <p>{% if Error %}{{ Error }}{% endif %}</p>
+      </div>
+      <div class="loginData">
+        <form action="http://sshide.de" method="post">
+         <label for="server">Server</label><br>
+         <input type="text" id="server" name="server"><br><br>
+         <label for="user">User</label><br>
+         <input type="text" id="user" name="user"><br><br>
+         <label for="Password">Password</label><br>
+         <input type="password" id="password" name="password"><br><br>
+         <label for="port">Port</label><br>
+         <input type="text" id="port" name="port" value="22"><br><br>
+         <button type="submit">Submit</button>
+        </form>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

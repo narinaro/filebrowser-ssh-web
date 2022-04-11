@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+body {
+  background-color: #1D2127;
+  margin: auto;
+  height: 100%;
+  font-family: 'Lato', sans-serif;
+}
+
+#wrapper {
+    width: 100%;
+    min-height: 100%;
+    /*border: 1px solid black;*/
+    overflow: hidden; /* will contain if #first is longer than #second */
+}
+#folderView {
+    width: 200px;
+    height: 800px;
+    float:left; /* add this */
+    color: #CFD9E4;
+}
+#editor {
+
+    height: 800px;
+    overflow: hidden; /* if you don't want #second to wrap below #first */
+}
+
+ul {
+    list-style-type: none;
+}
+
+;

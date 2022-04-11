@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+body {
+  background-color: #1D2127;
+  margin: auto;
+  font-family: 'Lato', sans-serif;
+
+}
+
+.content {
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-top: 3%;
+}
+
+h1 {
+  color: #CFD9E4;
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
+
+.header p {
+  margin: 0;
+  padding: 0;
+  color: #f6c453;
+}
+
+.header {
+  background-color: #2E333A;
+  font-family: 'Lato', sans-serif;
+  text-align: center;
+  padding: 10px;
+  display: flex;
+}
+
+.ueberschrift {
+  width: 50%;
+  margin-left: 30%;
+  text-align: left;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon {
+  background: transparent;
+  border: none;
+}
+
+.back_button {
+  text-align: left;
+  margin-left: 5%;
+}
+
+.back_button button{
+  background: transparent;
+  border: none;
+}
+
+.back_button button:hover{
+  background: #fefbe9;
+}
+
+.files img, .folders img {
+  margin:0;
+  padding:0;
+}
+
+.files p, .folders p {
+  color: #ffffff;
+}
+
+.menue {
+     display: flex;
+}
+
+.options {
+  margin:0;
+  padding: 0;
+  display: flex;
+  margin-bottom: 3%;
+}
+
+.options button {
+     background:#2E333A;
+     color: #CFD9E4;
+     border-color: #2E333A;
+     text-shadow: none;
+     border-radius: 10%;
+     margin-right: 10px;
+     height: 23pt;
+     white-space: nowrap;
+}
+
+.options button:hover {
+     background:#1D2127;
+     border-color: #2E333A;
+     color: #f6c453;
+}
+
+.newElement {
+  display: inline;
+}
+
+.login {
+  text-align: left;
+  justify-content: center;
+  align-items: center;
+  margin-left: 5%;
+  margin-top: 1%;
+
+}
+
+.login input{
+  width: 20px;
+}
+
+.login p{
+  color: #CFD9E4;
+}
+
+input {
+  border-color: #AFBAC5;
+  background-color: #282D33;
+  color: #AFBAC5;
+  border-style: solid;
+  border-radius: 7px;
+  text-align: center;
+}
+
+input:focus {
+  outline:none;
+  box-shadow: 0px 0px 10px #fefbe9;
+
+}
+
+.search {
+  margin-left: 30%;
+}
+;

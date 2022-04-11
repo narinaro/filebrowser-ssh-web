@@ -1,0 +1,40 @@
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="utf-8">
+  <title>SSH - File Browser</title>
+  <meta name="author" content="DGR">
+  <link rel="icon" href="https://img.icons8.com/color/48/000000/pen.png"/>
+  <link rel="stylesheet" href="{% static 'codemirror/theme/base16-dark.css' %}">
+  <script src="{% static 'codemirror/lib/codemirror.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'codemirror/lib/codemirror.css' %}">
+  <script src="{% static 'codemirror/mode/javascript/javascript.js' %}"></script>
+
+</head>
+
+<div class="openFile">
+  <div id="editor">
+    <textarea id="textArea" name="content" rows="8" cols="80">{{ content }}</textarea>
+  </div>
+
+  <form class="button" action="http://sshide.de/open/" method="post">
+    <input type="hidden" name="path" value="{{ path }}">
+    <input type="hidden" name="folder" value="{{ folder }}">
+    <input id="contentContainer" type="hidden" name="content">
+    <button onclick="updateContent()" type="submit">Save</button>
+  </form>
+  <script type="text/javascript">
+    var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("textArea"), {
+         value: "test",
+         mode: "javascript",
+         theme: "base16-dark",
+         lineNumbers: true
+    });
+
+    myCodeMirror.setSize("100%", "100%");
+
+    function updateContent() {
+        document.getElementById('contentContainer').value = myCodeMirror.getValue();
+    }
+  </script>
+</div>
