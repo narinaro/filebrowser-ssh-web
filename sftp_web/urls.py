@@ -24,6 +24,6 @@ urlpatterns = [
     path('filebrowser/', include('file_browser.urls')),
     path('open/', include('open_file.urls')),
     path('options/', include('options.urls')),
-    path('ide/', include('ide.urls')),
+    #path('ide/', include('ide.urls')),
 
 ]
