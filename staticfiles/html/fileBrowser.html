@@ -12,7 +12,7 @@
 
 <div class="header">
     <div class="login">
-      <form action="http://sshide.de/" method="get">
+      <form action="http://localhost/" method="get">
         <input type="image" src="/static/img/log-out.png">
       </form>
       <p>{{ IP }}</p>
@@ -34,7 +34,7 @@
   <div class="options">
 
     <button type="button" onclick="deleteOptIni()" id="deleteSelect">Delete</button>
-    <form action="http://sshide.de/options/" method="post">
+    <form action="http://localhost/options/" method="post">
       <input type="hidden" name="delete" value="1">
       <input type="hidden" name="path" value="{{ path }}">
       {% for item, folderFlag, counter in itemsZip %}
@@ -49,7 +49,7 @@
 
 
     <button onclick="newFolder()">New folder</button>
-    <form class="newElement" id="newFolder" action="http://sshide.de/options/" method="post">
+    <form class="newElement" id="newFolder" action="http://localhost/options/" method="post">
       <input type="hidden" name="create" value="1">
       <input type="hidden" name="path" value="{{ path }}">
       <input id="inputNewFolder" type="text" name="newFolder" placeholder="Folder name">
@@ -58,7 +58,7 @@
 
 
     <button onclick="newFile()">New file</button>
-    <form class="newElement" id="newFile" action="http://sshide.de/options/" method="post">
+    <form class="newElement" id="newFile" action="http://localhost/options/" method="post">
       <input type="hidden" name="create" value="1">
       <input type="hidden" name="path" value="{{ path }}">
       <input id="inputNewFile" type="text" name="newFile" placeholder="File name">
@@ -67,7 +67,7 @@
 
 
     <button type="button" onclick="downloadOptIni()" id="downloadSelect">Download</button>
-    <form id="downloadForm" action="http://sshide.de/options/" method="post">
+    <form id="downloadForm" action="http://localhost/options/" method="post">
       <input type="hidden" name="download" value="1">
       <input type="hidden" name="path" value="{{ path }}">
       {% for item, folderFlag, counter in itemsZip %}
@@ -81,7 +81,7 @@
     </form>
 
     <button type="button" onclick="renameOptIni()" id="renameSelect">Rename</button>
-    <form action="http://sshide.de/options/" method="post">
+    <form action="http://localhost/options/" method="post">
       <input type="hidden" name="rename" value="1">
       <input type="hidden" name="path" value="{{ path }}">
       {% for item, folderFlag, counter in itemsZip %}
@@ -97,7 +97,7 @@
 
 
     <button type="button" onclick="uploadOptIni()" id="uploadSelect">Upload</button>
-    <form id="uploadForm" class="uploadElement" enctype="multipart/form-data" action="http://sshide.de/options/" method="post">
+    <form id="uploadForm" class="uploadElement" enctype="multipart/form-data" action="http://localhost/options/" method="post">
       <input type="hidden" name="upload" value="1">
       <input type="hidden" name="path" value="{{ path }}">
       <input type="submit" value="Upload">
@@ -106,7 +106,7 @@
 
     <button id="selectAll" onclick="selectAll()">Select all</button>
 
-    <form class="shellBox" action="http://sshide.de/options/" method="post">
+    <form class="shellBox" action="http://localhost/options/" method="post">
       <input type="hidden" name="exec" value="1">
       <input type="hidden" name="path" value="{{ path }}">
       <input type="text" name="command" placeholder="Command">
@@ -131,7 +131,7 @@
             </div>
           {% else %}
             <div class="files col-lg-2 col-sm-4 d-flex justify-content-center">
-              <form action="http://sshide.de/open/" method="get">
+              <form action="http://localhost/open/" method="get">
                 <input type="hidden" name="file" value="{{ item }}">
                 <input type="hidden" name="folder" value="{{ path }}">
                 <input class="{{ item }}" id="{{ counter }}" type="checkbox">

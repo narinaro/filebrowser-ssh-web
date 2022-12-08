@@ -48,7 +48,7 @@ def openFile(request):
         )
         connection.commandExec(command)
         connection.client.close()
-        link = "http://sshide.de/filebrowser/?folder={}".format(
+        link = "http://localhost/filebrowser/?folder={}".format(
             request.POST.get("folder", "")
         )
         # close connection

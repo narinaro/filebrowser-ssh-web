@@ -46,7 +46,7 @@ def options(request):
     # close connection
     connection.closeConn()
 
-    link = "http://sshide.de/filebrowser/?folder={}".format(
+    link = "http://localhost/filebrowser/?folder={}".format(
         request.POST.get("path", "")
     )
 

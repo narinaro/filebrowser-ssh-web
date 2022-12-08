@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-z9*k%5n+w^h^8a-t-ua_+a!2^r0+91y7pqelr*)kicw0a8w9wa
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["sshide.de", "127.0.0.1", "localhost",]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "sshide",]
 
 
 # Application definition
@@ -82,16 +82,12 @@ WSGI_APPLICATION = "sftp_web.wsgi.application"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "django",
-        "USER": "narinaro",
-        "PASSWORD": "yk5Gi4*4rj9",
-        "HOST": "81.169.151.227",
-        "PORT": "3306",
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'testdatabase', # This is where you put the name of the db file. 
+                 # If one doesn't exist, it will be created at migration time.
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

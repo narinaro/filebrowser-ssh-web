@@ -21,7 +21,7 @@ def login(request):
             or not request.POST.get("port", "")
             or not request.POST.get("password", "")
         ):
-            return redirect("http://sshide.de/?error=true")
+            return redirect("http://localhost/?error=true")
 
         try:
 
@@ -47,13 +47,13 @@ def login(request):
             )
 
         except paramiko.AuthenticationException:
-            return redirect("http://sshide.de/?error=true")
+            return redirect("http://localhost/?error=true")
         except paramiko.BadHostKeyException:
-            return redirect("http://sshide.de/?error=true")
+            return redirect("http://localhost/?error=true")
         except paramiko.SSHException:
-            return redirect("http://sshide.de/?error=true")
+            return redirect("http://localhost/?error=true")
         except paramiko.ssh_exception.NoValidConnectionsError:
-            return redirect("http://sshide.de/?error=true")
+            return redirect("http://localhost/?error=true")
         finally:
             client.close()
 
