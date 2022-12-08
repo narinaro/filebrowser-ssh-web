@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 import paramiko
 from django.http import HttpResponse
+import os
 
 
 def login(request):
@@ -12,7 +13,7 @@ def login(request):
         error = " "
         if request.GET.get("error", "") == "true":
             error = "Check credentials"
-        return render(request, "index.html", {"Error": error})
+        return render(request, "index.html", {"Error": error, "URL": request._current_scheme_host,})
     elif request.method == "POST":
 
         if (
@@ -21,7 +22,7 @@ def login(request):
             or not request.POST.get("port", "")
             or not request.POST.get("password", "")
         ):
-            return redirect("http://localhost/?error=true")
+            return redirect(f"http://{request._current_scheme_host}/?error=true")
 
         try:
 
@@ -47,13 +48,13 @@ def login(request):
             )
 
         except paramiko.AuthenticationException:
-            return redirect("http://localhost/?error=true")
+            return redirect(f"http://{request._current_scheme_host}/?error=true")
         except paramiko.BadHostKeyException:
-            return redirect("http://localhost/?error=true")
+            return redirect(f"http://{request._current_scheme_host}/?error=true")
         except paramiko.SSHException:
-            return redirect("http://localhost/?error=true")
+            return redirect(f"http://{request._current_scheme_host}/?error=true")
         except paramiko.ssh_exception.NoValidConnectionsError:
-            return redirect("http://localhost/?error=true")
+            return redirect(f"http://{request._current_scheme_host}/?error=true")
         finally:
             client.close()
 

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import os
+import socket
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,8 +27,13 @@ SECRET_KEY = "django-insecure-z9*k%5n+w^h^8a-t-ua_+a!2^r0+91y7pqelr*)kicw0a8w9wa
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "sshide",]
+ALLOWED_HOSTS = ["192.168.178.84", "localhost", "127.0.0.1"]
 
+try:
+    HOSTNAME = socket.gethostname()
+except:
+    HOSTNAME = 'localhost'
+print(HOSTNAME)
 
 # Application definition
 
@@ -84,7 +90,7 @@ WSGI_APPLICATION = "sftp_web.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'testdatabase', # This is where you put the name of the db file. 
+        'NAME': 'testdatabase', # This is where you put the name of the db file.
                  # If one doesn't exist, it will be created at migration time.
     }
 }

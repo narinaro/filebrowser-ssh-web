@@ -22,7 +22,7 @@
         <p>{% if Error %}{{ Error }}{% endif %}</p>
       </div>
       <div class="loginData">
-        <form action="http://localhost" method="post">
+        <form action="{{ URL }}" method="post">
          <label for="server">Server</label><br>
          <input type="text" id="server" name="server"><br><br>
          <label for="user">User</label><br>

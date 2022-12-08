@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import paramiko
 from django.db.models import Max
+import os
 
 client = paramiko.SSHClient()
 
@@ -46,6 +47,7 @@ def ide(request):
             "currpath": request.GET.get("folder", ""),
             "currfile": request.GET.get("file", ""),
             "fileext": file_ext,
+            "URL": request._current_scheme_host,
         },
     )
 

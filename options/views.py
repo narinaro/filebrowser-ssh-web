@@ -46,9 +46,7 @@ def options(request):
     # close connection
     connection.closeConn()
 
-    link = "http://localhost/filebrowser/?folder={}".format(
-        request.POST.get("path", "")
-    )
+    link = f"http://{request._current_scheme_host}/filebrowser/?folder={request.POST.get('path', '')}"
 
     return redirect(link)
 

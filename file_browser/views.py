@@ -2,6 +2,7 @@ from paramiko import SSHClient, AutoAddPolicy
 from django.shortcuts import render
 from .con_ssh import ConSSH as ssh
 from django.http import HttpResponse
+import os
 
 counter = 0
 itemsZip = []
@@ -50,6 +51,7 @@ def fileBrowser(request):
             "path": path,
             # IP
             "IP": connection.server,
+            "URL": request._current_scheme_host,
         },
     )
 

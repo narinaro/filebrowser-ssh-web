@@ -36,6 +36,7 @@ def openFile(request):
                 "content": response_text,
                 "path": file,
                 "folder": request.GET.get("folder", ""),
+                "URL": request._current_scheme_host,
             },
         )
 
@@ -48,9 +49,7 @@ def openFile(request):
         )
         connection.commandExec(command)
         connection.client.close()
-        link = "http://localhost/filebrowser/?folder={}".format(
-            request.POST.get("folder", "")
-        )
+        link = f"http://{request._current_scheme_host}/filebrowser/?folder={request.POST.get('folder', '')}"
         # close connection
         connection.closeConn()
 
