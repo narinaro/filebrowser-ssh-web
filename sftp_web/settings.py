@@ -29,12 +29,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["192.168.178.84", "localhost", "127.0.0.1"]
 
-try:
-    HOSTNAME = socket.gethostname()
-except:
-    HOSTNAME = 'localhost'
-print(HOSTNAME)
-
 # Application definition
 
 INSTALLED_APPS = [
